@@ -80,10 +80,11 @@ app.get('/api/getteamdetails', (req, res) => {
 
 app.post('/api/insertteam/', (req, res) => {
     const TeamName = req.body.TeamName;
+    const TeamLogo = req.body.TeamLogo;
     const sqlInsert = 
-    "INSERT INTO team (TeamName) VALUES (?)";
+    "INSERT INTO team (TeamName, TeamLogo) VALUES (?, ?)";
 
-    db.query(sqlInsert, [TeamName], (err, result) => {
+    db.query(sqlInsert, [TeamName, TeamLogo], (err, result) => {
         console.log(result);
     })
 });
@@ -139,7 +140,7 @@ app.get('/api/getplayerfromgame', (req, res) => {
 app.get('/api/getplayerdetails', (req, res) => {
     const PlayerID = req.query.PlayerID;
     const sqlSelect = 
-    "SELECT player.*, TeamName FROM player, team " +
+    "SELECT player.*, TeamName, TeamLogo FROM player, team " +
     " WHERE team.TeamID=player.PlayerTeamID AND player.PlayerID = ?"
 
     db.query(sqlSelect, PlayerID, (err, result) => {
@@ -155,11 +156,13 @@ app.post('/api/insertplayer/', (req, res) => {
     const Height = req.body.Height;
     const Weight = req.body.Weight;
     const Team = req.body.PlayerTeamID;
+    const PlayerImage = req.body.PlayerImage;
 
     const sqlInsert = 
-    "INSERT INTO player (FirstName, LastName, Jersey, Position, Height, Weight, PlayerTeamID) VALUES (?,?,?,?,?,?,?)";
+    "INSERT INTO player (FirstName, LastName, Jersey, Position, Height, Weight, PlayerTeamID, PlayerImage)" +
+    " VALUES (?,?,?,?,?,?,?,?)";
 
-    db.query(sqlInsert, [FirstName, LastName, Jersey, Position, Height, Weight, Team], (err, result) => {
+    db.query(sqlInsert, [FirstName, LastName, Jersey, Position, Height, Weight, Team, PlayerImage], (err, result) => {
         console.log(result);
     })
 });
@@ -451,7 +454,8 @@ app.get('/api/perleaders', (req, res) => {
 
 app.get('/api/getscores/', (req, res) => {
     const sqlSelect = 
-    "SELECT g.*, a.TeamName AS AwayTeamName , b.TeamName AS HomeTeamName," +
+    "SELECT g.*, a.TeamName AS AwayTeamName, a.TeamLogo AS AwayTeamLogo," +
+    " b.TeamName AS HomeTeamName, b.TeamLogo AS HomeTeamLogo, " +
     "DATE_FORMAT(`GameDateTime`, '%Y-%m-%d %H:%i') AS `FormDate`" +
      " FROM game AS g " +
      " LEFT JOIN team AS a ON g.AwayTeamID=a.TeamID" +
@@ -478,11 +482,11 @@ app.delete('/api/deletescore/:GameID', (req, res) => {
 
 app.get('/api/gettable/', (req, res) => {
     const sqlSelect = 
-    "SELECT tt.TeamID, tt.TeamName," +
+    "SELECT tt.TeamID, tt.TeamName, tt.TeamLogo," +
     " SUM(CASE WHEN result > 0 THEN 1 ELSE 0 END) AS TotalWins," +
     " SUM(CASE WHEN result < 0 THEN 1 ELSE 0 END) AS TotalLosses" +
     " FROM (" +
-    " SELECT t.TeamID, t.TeamName," +
+    " SELECT t.TeamID, t.TeamName, t.TeamLogo," +
     " (g.HomeTeamScore - g.AwayTeamScore) * CASE" +
     " WHEN t.TeamID = g.HomeTeamID THEN 1" + 
     " WHEN t.TeamID = g.AwayTeamID THEN -1" + 
