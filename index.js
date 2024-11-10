@@ -602,6 +602,31 @@ app.post('/api/insertschedule/', (req, res) => {
     })
 });
 
+// NEWS - POST AND GET
+
+app.post('/api/insertnews/', (req, res) => {
+    const NewsTitle = req.body.NewsTitle;
+    const NewsText = req.body.NewsText;
+
+    const sqlInsert = 
+    "INSERT INTO news (NewsTitle, NewsText, DateTime) VALUES (?,?,?)";
+
+    db.query(sqlInsert, [NewsTitle, NewsText, getDateTime()], (err, result) => {
+        console.log(result);
+    })
+});
+
+app.get('/api/getnewsdata', (req, res) => {
+    const sqlSelect = 
+    "SELECT * FROM news" +
+    " ORDER BY DateTime DESC";
+
+    db.query(sqlSelect, (err, result) => {
+        console.log(err);
+        res.send(result);
+    })
+})
+
 
 app.listen(3001, () => {
     console.log("running on port 3001");
