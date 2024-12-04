@@ -558,7 +558,8 @@ app.get('/api/getgamedetails/', (req, res) => {
 
 app.get('/api/getschedule/', (req, res) => {
     const sqlSelect = 
-    "SELECT g.*, a.TeamName AS AwayTeamName , b.TeamName AS HomeTeamName," +
+    "SELECT g.*, a.TeamName AS AwayTeamName, a.TeamLogo AS AwayTeamLogo," +
+    " b.TeamName AS HomeTeamName, b.TeamLogo AS HomeTeamLogo, " +
     "DATE_FORMAT(`GameDateTime`, '%Y-%m-%d %H:%i') AS `FormDate`" +
      " FROM game AS g " +
      " LEFT JOIN team AS a ON g.AwayTeamID=a.TeamID" +
@@ -618,7 +619,9 @@ app.post('/api/insertnews/', (req, res) => {
 
 app.get('/api/getnewsdata', (req, res) => {
     const sqlSelect = 
-    "SELECT * FROM news" +
+    "SELECT * , " +
+    "DATE_FORMAT(`DateTime`, '%Y-%m-%d %H:%i') AS `FormDate` " +
+    "FROM news" +
     " ORDER BY DateTime DESC";
 
     db.query(sqlSelect, (err, result) => {
