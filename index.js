@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const corsOption = {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+}
 const app = express();
 const mysql = require('mysql');
 
@@ -39,7 +44,7 @@ function getDateTime() {
      return dateTime;
 }
 
-app.use(cors());
+app.use(cors(corsOption));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -294,7 +299,8 @@ app.get('/api/getplayeravgs', (req, res) => {
     " SUM(ThreePointersMade) as threepm," +
     " SUM(ThreePointersAttempted) as threepa," +
     " SUM(FreeThrowsMade) as ftm," +
-    " SUM(FreeThrowsAttempted) as fta" +
+    " SUM(FreeThrowsAttempted) as fta," +
+    " AVG(Minutes) as mpg" +
     " FROM actions GROUP BY PlayerID) a" +
     " LEFT JOIN player AS p ON a.PlayerID = p.PlayerID"+
     " WHERE a.PlayerID =?" 
