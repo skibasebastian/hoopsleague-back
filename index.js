@@ -636,6 +636,16 @@ app.get('/api/getnewsdata', (req, res) => {
     })
 })
 
+app.delete('/api/deletenews/:NewsID', (req, res) => {
+    const NewsID = req.params.NewsID;
+    const sqlDelete = 
+    "DELETE FROM news WHERE NewsID = ?";
+
+    db.query(sqlDelete, NewsID, (err, result) => {
+        if (err) console.log(err);
+    })
+})
+
 
 app.listen(3001, () => {
     console.log("running on port 3001");
